@@ -20,14 +20,14 @@ const EmptyIllustration = () => (
         viewBox="0 0 160 120"
         fill="none"
         aria-hidden="true"
-        className="text-brand-500/40"
+        style={{ color: "#818cf8" }}
     >
-        <rect x="36" y="14" width="88" height="92" rx="8" stroke="currentColor" strokeWidth="2" fill="white" />
+        <rect x="36" y="14" width="88" height="92" rx="8" stroke="currentColor" strokeWidth="2" fill="#18181b" />
         <line x1="48" y1="34" x2="112" y2="34" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
         <line x1="48" y1="48" x2="100" y2="48" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
         <line x1="48" y1="62" x2="112" y2="62" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
         <line x1="48" y1="76" x2="92" y2="76" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-        <circle cx="124" cy="14" r="14" fill="#EEF2FF" stroke="currentColor" strokeWidth="2" />
+        <circle cx="124" cy="14" r="14" fill="rgba(99, 102, 241, 0.15)" stroke="currentColor" strokeWidth="2" />
         <path d="M118 14 L122 18 L130 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
     </svg>
 );
@@ -43,9 +43,8 @@ export default function Home() {
         <main>
             <Navbar />
 
-            <section className="relative overflow-hidden" style={{ maxHeight: 360 }}>
-                <div className="absolute inset-0 hero-pattern opacity-60 pointer-events-none" aria-hidden="true" />
-                <div className="container-app relative z-10" style={{ paddingTop: 56, paddingBottom: 56 }}>
+            <section className="hero-glow" style={{ maxHeight: 360 }}>
+                <div className="container-app relative z-10" style={{ paddingTop: 64, paddingBottom: 64 }}>
                     <motion.div
                         initial={{ opacity: 0, y: 12 }}
                         animate={{ opacity: 1, y: 0 }}

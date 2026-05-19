@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Summary from "~/components/Summary";
 import ATS from "~/components/ATS";
 import Details from "~/components/Details";
+import EditSuggestions from "~/components/EditSuggestions";
 import JobRecommendations from "~/components/JobRecommendations";
 import { getResume, type StoredResume } from "~/lib/storage";
 
@@ -94,28 +95,45 @@ const Resume = () => {
                     </h1>
                 </motion.div>
 
-                <div className="flex flex-col gap-5 content-narrow mx-auto">
-                    {feedback ? (
-                        <motion.div
-                            initial={{ opacity: 0, y: 12 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3, ease: "easeOut" }}
-                            className="flex flex-col gap-5"
-                        >
+                {feedback ? (
+                    <motion.div
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, ease: "easeOut" }}
+                        className="flex flex-col gap-5"
+                    >
+                        {/* Row 1 — score overview + ATS, side-by-side on lg+ */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                             <Summary feedback={feedback} />
-                            <ATS score={feedback.ATS.score || 0} suggestions={feedback.ATS.tips || []} />
-                            <Details feedback={feedback} />
-                            <JobRecommendations skill={resume?.jobTitle || ""} />
-                        </motion.div>
-                    ) : (
-                        <div className="card flex flex-col items-center" style={{ paddingTop: 48, paddingBottom: 48, gap: 12 }}>
-                            <div className="flex items-center gap-2 text-text-tertiary">
-                                <span className="w-2 h-2 rounded-full bg-brand-600 animate-pulse" />
-                                <span style={{ fontSize: "var(--text-small)" }}>Loading analysis…</span>
-                            </div>
+                            <ATS
+                                score={feedback.ATS.score || 0}
+                                suggestions={feedback.ATS.tips || []}
+                            />
                         </div>
-                    )}
-                </div>
+
+                        {/* Row 2 — detailed breakdown (full width accordion) */}
+                        <Details feedback={feedback} />
+
+                        {/* Row 3 — suggested edits (2-col card grid inside on lg+) */}
+                        <EditSuggestions edits={resume?.edits ?? []} />
+
+                        {/* Row 4 — recommended jobs (2-col grid inside on lg+) */}
+                        <JobRecommendations
+                            skill={resume?.jobTitle || ""}
+                            profile={resume?.profile}
+                        />
+                    </motion.div>
+                ) : (
+                    <div
+                        className="card flex flex-col items-center"
+                        style={{ paddingTop: 48, paddingBottom: 48, gap: 12 }}
+                    >
+                        <div className="flex items-center gap-2 text-text-tertiary">
+                            <span className="w-2 h-2 rounded-full bg-brand-600 animate-pulse" />
+                            <span style={{ fontSize: "var(--text-small)" }}>Loading analysis…</span>
+                        </div>
+                    </div>
+                )}
             </div>
         </main>
     );

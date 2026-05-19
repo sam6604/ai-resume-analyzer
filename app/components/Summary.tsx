@@ -3,10 +3,11 @@ import ScoreCircle from "~/components/ScoreCircle";
 const CategoryTile = ({ title, score }: { title: string; score: number }) => {
     return (
         <div
-            className="flex flex-col items-center bg-white"
+            className="flex flex-col items-center"
             style={{
                 gap: 8,
                 padding: "16px 12px",
+                background: "var(--color-card-bg-elevated)",
                 border: "1px solid var(--color-border)",
                 borderRadius: 10,
             }}
@@ -38,7 +39,7 @@ const Summary = ({ feedback }: { feedback: Feedback }) => {
                 </div>
             </div>
             <div
-                className="grid grid-cols-2 xl:grid-cols-4"
+                className="grid grid-cols-2"
                 style={{ gap: 12, marginTop: 20 }}
             >
                 <CategoryTile title="Tone & Style" score={feedback.toneAndStyle.score} />

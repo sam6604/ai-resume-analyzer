@@ -46,7 +46,9 @@ const CategoryContent = ({
                     background:
                         tip.type === "good" ? "var(--color-success-soft)" : "var(--color-warning-soft)",
                     border:
-                        tip.type === "good" ? "1px solid #bbf7d0" : "1px solid #fde68a",
+                        tip.type === "good"
+                            ? "1px solid var(--color-success-border)"
+                            : "1px solid var(--color-warning-border)",
                 }}
             >
                 <div className="flex items-start" style={{ gap: 8, marginBottom: 4 }}>
