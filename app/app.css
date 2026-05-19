@@ -1,7 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Mona+Sans:ital,wght@0,200..900;1,200..900&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @theme {
+<<<<<<< Updated upstream
   /* Typography */
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -545,4 +547,116 @@ form {
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
+=======
+  --font-sans: "Mona Sans", ui-sans-serif, system-ui, sans-serif,
+  "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  
+  --color-primary: #6366f1;
+  --color-primary-dark: #4f46e5;
+  --color-secondary: #0ea5e9;
+  
+  --color-dark-200: #1e293b;
+  --color-dark-300: #0f172a;
+  --color-dark-400: #020617;
+  
+  --color-glass: rgba(255, 255, 255, 0.7);
+  --color-glass-dark: rgba(15, 23, 42, 0.8);
+
+  --color-badge-green: #dcfce7;
+  --color-badge-red: #fee2e2;
+  --color-badge-yellow: #fef9c3;
+
+  --color-badge-green-text: #166534;
+  --color-badge-red-text: #991b1b;
+  --color-badge-yellow-text: #854d0e;
+}
+
+@layer base {
+  html,
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased selection:bg-indigo-100 selection:text-indigo-900;
+  }
+
+  main {
+    @apply min-h-screen relative overflow-hidden;
+  }
+}
+
+@layer components {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-800;
+  }
+  
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-xl border border-white/40 shadow-2xl shadow-indigo-500/10 rounded-3xl;
+  }
+  
+  .glass-navbar {
+    @apply sticky top-4 z-50 mx-auto max-w-5xl bg-white/60 backdrop-blur-md border border-white/20 shadow-lg rounded-2xl px-6 py-3 transition-all duration-300;
+  }
+
+  .primary-button {
+    @apply relative overflow-hidden bg-indigo-600 text-white rounded-xl px-6 py-2.5 font-semibold transition-all duration-300 
+           hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-500/30 active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+  }
+  
+  .secondary-button {
+    @apply bg-white text-slate-900 border border-slate-200 rounded-xl px-6 py-2.5 font-semibold transition-all duration-300 
+           hover:bg-slate-50 hover:border-slate-300 active:scale-95;
+  }
+
+  .premium-input {
+    @apply w-full p-4 bg-white/50 backdrop-blur-sm border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-slate-900 placeholder:text-slate-400;
+  }
+
+  .resume-nav {
+    @apply flex flex-row justify-between items-center p-6 border-b border-slate-200 bg-white/50 backdrop-blur-sm;
+  }
+
+  .main-section {
+    @apply relative z-10 flex flex-col items-center gap-12 px-6 py-20 max-w-7xl mx-auto;
+  }
+
+  .page-heading {
+    @apply flex flex-col items-center gap-6 text-center animate-in fade-in slide-in-from-bottom-4 duration-1000;
+    h1 { @apply text-5xl md:text-7xl font-bold tracking-tight text-slate-900; }
+    h2 { @apply text-xl text-slate-600 max-w-2xl font-medium; }
+  }
+
+  .resumes-section {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full animate-in fade-in zoom-in-95 duration-700 delay-300;
+  }
+
+  .resume-card {
+    @apply relative flex flex-col bg-white border border-slate-100 rounded-3xl p-5 transition-all duration-500 
+           hover:shadow-2xl hover:shadow-indigo-500/10 hover:-translate-y-1;
+  }
+
+  .feedback-section {
+    @apply flex flex-col gap-10 w-full lg:w-1/2 p-8 animate-in fade-in slide-in-from-right-8 duration-700;
+  }
+}
+
+@utility primary-gradient {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+}
+
+@utility mesh-bg {
+  background-color: #f8fafc;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(14, 165, 233, 0.1) 0px, transparent 50%);
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+>>>>>>> Stashed changes
 }

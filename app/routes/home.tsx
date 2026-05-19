@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import type { Route } from "./+types/home";
 import Navbar from "~/components/Navbar";
 import ResumeCard from "~/components/ResumeCard";
+<<<<<<< Updated upstream
 import { Link } from "react-router";
 import { useEffect, useState } from "react";
 import { listResumes, type StoredResume } from "~/lib/storage";
@@ -11,6 +12,18 @@ export function meta({}: Route.MetaArgs) {
         { title: "Resumind" },
         { name: "description", content: "Smart feedback for your dream job!" },
     ];
+=======
+import Intro from "~/components/Intro";
+import {usePuterStore} from "~/lib/puter";
+import {Link, useNavigate} from "react-router";
+import {useEffect, useState} from "react";
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Resumind" },
+    { name: "description", content: "Smart feedback for your dream job!" },
+  ];
+>>>>>>> Stashed changes
 }
 
 const EmptyIllustration = () => (
@@ -33,6 +46,7 @@ const EmptyIllustration = () => (
 );
 
 export default function Home() {
+<<<<<<< Updated upstream
     const [resumes, setResumes] = useState<StoredResume[]>([]);
 
     useEffect(() => {
@@ -111,4 +125,101 @@ export default function Home() {
             </section>
         </main>
     );
+=======
+  const { auth, kv } = usePuterStore();
+  const navigate = useNavigate();
+  const [resumes, setResumes] = useState<Resume[]>([]);
+  const [loadingResumes, setLoadingResumes] = useState(false);
+  const [showIntro, setShowIntro] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const hasSeenIntro = sessionStorage.getItem('hasSeenIntro');
+    setShowIntro(!hasSeenIntro);
+  }, []);
+
+  useEffect(() => {
+    if(showIntro === false && !auth.isAuthenticated) {
+        navigate('/auth?next=/');
+    }
+  }, [auth.isAuthenticated, showIntro])
+
+  useEffect(() => {
+    if (showIntro !== false) return;
+
+    const loadResumes = async () => {
+      setLoadingResumes(true);
+
+      const resumes = (await kv.list('resume:*', true)) as KVItem[];
+
+      const parsedResumes = resumes?.map((resume) => (
+          JSON.parse(resume.value) as Resume
+      ))
+
+      setResumes(parsedResumes || []);
+      setLoadingResumes(false);
+    }
+
+    loadResumes()
+  }, [showIntro]);
+
+  const handleIntroFinish = () => {
+    setShowIntro(false);
+    sessionStorage.setItem('hasSeenIntro', 'true');
+  };
+
+  if (showIntro === null) return null;
+
+  if (showIntro) {
+    return <Intro onFinish={handleIntroFinish} />;
+  }
+
+  return <main className="mesh-bg">
+    {/* Decorative Glows */}
+    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl h-screen pointer-events-none overflow-hidden">
+      <div className="absolute -top-[10%] -left-[10%] size-[500px] bg-indigo-500/10 blur-[120px] rounded-full" />
+      <div className="absolute top-[20%] -right-[10%] size-[400px] bg-sky-500/10 blur-[120px] rounded-full" />
+    </div>
+
+    <Navbar />
+
+    <section className="main-section">
+      <div className="page-heading">
+        <h1 className="text-gradient">Track Your Applications & <br className="hidden md:block" /> Resume Ratings</h1>
+        {!loadingResumes && resumes?.length === 0 ? (
+            <h2>No resumes found. Upload your first resume to get feedback.</h2>
+        ): (
+          <h2>Review your submissions and check AI-powered feedback.</h2>
+        )}
+      </div>
+
+      {loadingResumes && (
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="relative">
+              <div className="size-24 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-xs font-bold text-indigo-600">AI</span>
+              </div>
+            </div>
+            <p className="mt-4 text-slate-500 font-medium animate-pulse">Scanning your database...</p>
+          </div>
+      )}
+
+      {!loadingResumes && resumes.length > 0 && (
+        <div className="resumes-section">
+          {resumes.map((resume) => (
+              <ResumeCard key={resume.id} resume={resume} />
+          ))}
+        </div>
+      )}
+
+      {!loadingResumes && resumes?.length === 0 && (
+          <div className="flex flex-col items-center justify-center mt-10 gap-6 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-500">
+            <Link to="/upload" className="primary-button scale-110 shadow-2xl">
+              Upload Your First Resume
+            </Link>
+          </div>
+      )}
+    </section>
+  </main>
+>>>>>>> Stashed changes
 }

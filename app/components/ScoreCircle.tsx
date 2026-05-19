@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import { useEffect, useState } from "react";
 
 export type ScoreVariant = "sm" | "md" | "lg";
@@ -73,6 +74,61 @@ const ScoreCircle = ({ score = 0, variant = "md" }: ScoreCircleProps) => {
                 >
                     {animated}
                 </span>
+=======
+const ScoreCircle = ({ score = 75 }: { score: number }) => {
+    const radius = 40;
+    const stroke = 6;
+    const normalizedRadius = radius - stroke / 2;
+    const circumference = 2 * Math.PI * normalizedRadius;
+    const progress = score / 100;
+    const strokeDashoffset = circumference * (1 - progress);
+
+    return (
+        <div className="relative w-20 h-20 group">
+            {/* Glow effect */}
+            <div className="absolute inset-0 bg-indigo-500/10 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+            
+            <svg
+                height="100%"
+                width="100%"
+                viewBox="0 0 100 100"
+                className="transform -rotate-90 relative z-10"
+            >
+                {/* Background circle */}
+                <circle
+                    cx="50"
+                    cy="50"
+                    r={normalizedRadius}
+                    stroke="#f1f5f9"
+                    strokeWidth={stroke}
+                    fill="transparent"
+                />
+                {/* Partial circle with gradient */}
+                <defs>
+                    <linearGradient id="circle-grad" x1="1" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#6366f1" />
+                        <stop offset="100%" stopColor="#818cf8" />
+                    </linearGradient>
+                </defs>
+                <circle
+                    cx="50"
+                    cy="50"
+                    r={normalizedRadius}
+                    stroke="url(#circle-grad)"
+                    strokeWidth={stroke}
+                    fill="transparent"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={strokeDashoffset}
+                    strokeLinecap="round"
+                    className="transition-all duration-1000 ease-out"
+                />
+            </svg>
+
+            {/* Score */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+                <span className="font-extrabold text-lg text-slate-900 leading-none">{score}</span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Score</span>
+>>>>>>> Stashed changes
             </div>
         </div>
     );

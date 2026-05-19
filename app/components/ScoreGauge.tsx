@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+<<<<<<< Updated upstream
 import type { ScoreVariant } from "./ScoreCircle";
 
 interface ScoreGaugeProps {
@@ -57,10 +58,56 @@ const ScoreGauge = ({ score = 0, variant = "md" }: ScoreGaugeProps) => {
                         strokeWidth={stroke}
                         strokeLinecap="round"
                     />
+=======
+
+const ScoreGauge = ({ score = 75 }: { score: number }) => {
+    const [pathLength, setPathLength] = useState(0);
+    const pathRef = useRef<SVGPathElement>(null);
+
+    const percentage = score / 100;
+
+    useEffect(() => {
+        if (pathRef.current) {
+            setPathLength(pathRef.current.getTotalLength());
+        }
+    }, []);
+
+    return (
+        <div className="flex flex-col items-center">
+            <div className="relative w-48 h-24 group">
+                {/* Glow */}
+                <div className="absolute inset-x-0 bottom-0 h-12 bg-indigo-500/10 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                
+                <svg viewBox="0 0 100 50" className="w-full h-full relative z-10">
+                    <defs>
+                        <linearGradient
+                            id="gauge-premium-grad"
+                            x1="0%"
+                            y1="0%"
+                            x2="100%"
+                            y2="0%"
+                        >
+                            <stop offset="0%" stopColor="#818cf8" />
+                            <stop offset="100%" stopColor="#4f46e5" />
+                        </linearGradient>
+                    </defs>
+
+                    {/* Background arc */}
+                    <path
+                        d="M10,50 A40,40 0 0,1 90,50"
+                        fill="none"
+                        stroke="#f1f5f9"
+                        strokeWidth="8"
+                        strokeLinecap="round"
+                    />
+
+                    {/* Foreground arc */}
+>>>>>>> Stashed changes
                     <path
                         ref={pathRef}
                         d="M10,50 A40,40 0 0,1 90,50"
                         fill="none"
+<<<<<<< Updated upstream
                         stroke={color}
                         strokeWidth={stroke}
                         strokeLinecap="round"
@@ -82,6 +129,22 @@ const ScoreGauge = ({ score = 0, variant = "md" }: ScoreGaugeProps) => {
                             {" /100"}
                         </span>
                     </span>
+=======
+                        stroke="url(#gauge-premium-grad)"
+                        strokeWidth="8"
+                        strokeLinecap="round"
+                        strokeDasharray={pathLength}
+                        strokeDashoffset={pathLength * (1 - percentage)}
+                        className="transition-all duration-1000 ease-out"
+                    />
+                </svg>
+
+                <div className="absolute inset-0 flex flex-col items-center justify-end pb-1 z-10">
+                    <div className="flex flex-col items-center">
+                        <span className="text-3xl font-black text-slate-900 leading-none">{score}</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Overall</span>
+                    </div>
+>>>>>>> Stashed changes
                 </div>
             </div>
         </div>

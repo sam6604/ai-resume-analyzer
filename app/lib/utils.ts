@@ -1,3 +1,4 @@
+
 import {type ClassValue, clsx} from "clsx";
 import {twMerge} from "tailwind-merge";
 
@@ -18,5 +19,9 @@ export function formatSize(bytes: number): string {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
+<<<<<<< Updated upstream
 export const generateUUID = () => crypto.randomUUID();
 
+=======
+export const generateUUID = () => crypto.randomUUID();
+>>>>>>> Stashed changes

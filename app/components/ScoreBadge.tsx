@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 interface ScoreBadgeProps {
     score: number;
 }
@@ -23,6 +24,37 @@ const ScoreBadge: React.FC<ScoreBadgeProps> = ({ score }) => {
             {label}
         </span>
     );
+=======
+import React from 'react';
+import { cn } from "~/lib/utils";
+
+interface ScoreBadgeProps {
+  score: number;
+  className?: string;
+}
+
+const ScoreBadge: React.FC<ScoreBadgeProps> = ({ score, className }) => {
+  const isGood = score > 69;
+  const isWarning = score > 49;
+
+  return (
+    <div className={cn(
+      "flex items-center gap-2 px-3 py-1.5 rounded-xl font-bold text-xs uppercase tracking-widest border transition-all duration-300",
+      isGood 
+        ? "bg-green-50 text-green-700 border-green-100" 
+        : isWarning 
+          ? "bg-amber-50 text-amber-700 border-amber-100" 
+          : "bg-red-50 text-red-700 border-red-100",
+      className
+    )}>
+      <div className={cn(
+        "size-2 rounded-full",
+        isGood ? "bg-green-500 animate-pulse" : isWarning ? "bg-amber-500" : "bg-red-500"
+      )} />
+      {score}%
+    </div>
+  );
+>>>>>>> Stashed changes
 };
 
 export default ScoreBadge;
