@@ -55,8 +55,11 @@ interface AccordionItemProps {
 
 export const AccordionItem: React.FC<AccordionItemProps> = ({ id, children, className = "" }) => (
     <div
-        className={cn("bg-white rounded-xl overflow-hidden", className)}
-        style={{ border: "1px solid var(--color-border)" }}
+        className={cn("rounded-xl overflow-hidden", className)}
+        style={{
+            background: "var(--color-card-bg)",
+            border: "1px solid var(--color-border)",
+        }}
     >
         {children}
     </div>
@@ -77,7 +80,8 @@ export const AccordionHeader: React.FC<AccordionHeaderProps> = ({ itemId, childr
             type="button"
             onClick={() => toggleItem(itemId)}
             className={cn(
-                "w-full text-left flex items-center justify-between gap-3 transition-colors duration-150 cursor-pointer hover:bg-gray-50",
+                "w-full text-left flex items-center justify-between gap-3 transition-colors duration-150 cursor-pointer",
+                "hover:bg-[var(--color-card-bg-elevated)]",
                 className
             )}
             style={{ padding: "16px 20px" }}

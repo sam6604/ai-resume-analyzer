@@ -5,12 +5,29 @@
 
 const KEY = "resumind:resumes";
 
+export interface EditSuggestion {
+    section: string;
+    original: string;
+    suggested: string;
+    reason: string;
+}
+
+export interface ResumeProfile {
+    summary: string;
+    top_skills: string[];
+    years_experience: string;
+    key_strengths: string[];
+    domains: string[];
+}
+
 export interface StoredResume {
     id: string;
     companyName: string;
     jobTitle: string;
     jobDescription: string;
     feedback: Feedback;
+    edits?: EditSuggestion[];
+    profile?: ResumeProfile;
     createdAt: number;
 }
 

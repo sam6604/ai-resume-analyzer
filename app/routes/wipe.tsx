@@ -56,10 +56,9 @@ const Wipe = () => {
                     )}
                     <div className="flex items-center gap-3 mt-5">
                         <button
-                            className="btn-primary"
+                            className="btn-primary btn-danger"
                             onClick={handleWipe}
                             disabled={resumes.length === 0}
-                            style={{ background: "var(--color-danger)" }}
                         >
                             Wipe all data
                         </button>
