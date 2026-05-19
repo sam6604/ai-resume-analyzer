@@ -1,90 +1,124 @@
-import {Link, useNavigate, useParams} from "react-router";
-import {useEffect, useState} from "react";
-import {usePuterStore} from "~/lib/puter";
+import { Link, useNavigate, useParams } from "react-router";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import Summary from "~/components/Summary";
 import ATS from "~/components/ATS";
 import Details from "~/components/Details";
+import JobRecommendations from "~/components/JobRecommendations";
+import { getResume, type StoredResume } from "~/lib/storage";
 
-export const meta = () => ([
-    { title: 'Resumind | Review ' },
-    { name: 'description', content: 'Detailed overview of your resume' },
-])
+export const meta = () => [
+    { title: "Resumind | Review" },
+    { name: "description", content: "Detailed overview of your resume" },
+];
 
 const Resume = () => {
-    const { auth, isLoading, fs, kv } = usePuterStore();
     const { id } = useParams();
-    const [imageUrl, setImageUrl] = useState('');
-    const [resumeUrl, setResumeUrl] = useState('');
-    const [feedback, setFeedback] = useState<Feedback | null>(null);
     const navigate = useNavigate();
+    const [resume, setResume] = useState<StoredResume | null>(null);
+    const [notFound, setNotFound] = useState(false);
 
     useEffect(() => {
-        if(!isLoading && !auth.isAuthenticated) navigate(`/auth?next=/resume/${id}`);
-    }, [isLoading])
-
-    useEffect(() => {
-        const loadResume = async () => {
-            const resume = await kv.get(`resume:${id}`);
-
-            if(!resume) return;
-
-            const data = JSON.parse(resume);
-
-            const resumeBlob = await fs.read(data.resumePath);
-            if(!resumeBlob) return;
-
-            const pdfBlob = new Blob([resumeBlob], { type: 'application/pdf' });
-            const resumeUrl = URL.createObjectURL(pdfBlob);
-            setResumeUrl(resumeUrl);
-
-            const imageBlob = await fs.read(data.imagePath);
-            if(!imageBlob) return;
-            const imageUrl = URL.createObjectURL(imageBlob);
-            setImageUrl(imageUrl);
-
-            setFeedback(data.feedback);
-            console.log({resumeUrl, imageUrl, feedback: data.feedback });
+        if (!id) return;
+        const r = getResume(id);
+        if (!r) {
+            setNotFound(true);
+            return;
         }
-
-        loadResume();
+        setResume(r);
     }, [id]);
 
-    return (
-        <main className="!pt-0">
-            <nav className="resume-nav">
-                <Link to="/" className="back-button">
-                    <img src="/icons/back.svg" alt="logo" className="w-2.5 h-2.5" />
-                    <span className="text-gray-800 text-sm font-semibold">Back to Homepage</span>
-                </Link>
-            </nav>
-            <div className="flex flex-row w-full max-lg:flex-col-reverse">
-                <section className="feedback-section bg-[url('/images/bg-small.svg') bg-cover h-[100vh] sticky top-0 items-center justify-center">
-                    {imageUrl && resumeUrl && (
-                        <div className="animate-in fade-in duration-1000 gradient-border max-sm:m-0 h-[90%] max-wxl:h-fit w-fit">
-                            <a href={resumeUrl} target="_blank" rel="noopener noreferrer">
-                                <img
-                                    src={imageUrl}
-                                    className="w-full h-full object-contain rounded-2xl"
-                                    title="resume"
-                                />
-                            </a>
+    if (notFound) {
+        return (
+            <main>
+                <nav className="resume-nav">
+                    <div className="container-app w-full flex items-center justify-between">
+                        <div className="breadcrumb">
+                            <Link to="/">Home</Link>
+                            <span>/</span>
+                            <span className="text-text-primary font-medium">Not found</span>
                         </div>
-                    )}
-                </section>
-                <section className="feedback-section">
-                    <h2 className="text-4xl !text-black font-bold">Resume Review</h2>
+                    </div>
+                </nav>
+                <div className="container-app" style={{ paddingTop: 48 }}>
+                    <div className="card text-center" style={{ padding: 48 }}>
+                        <h2>Analysis not found</h2>
+                        <p className="mt-2" style={{ fontSize: "var(--text-small)" }}>
+                            This analysis isn't in your local storage. It may have been wiped, or
+                            you're viewing it from a different browser.
+                        </p>
+                        <button className="btn-primary mt-4" onClick={() => navigate("/upload")}>
+                            Analyze a new resume
+                        </button>
+                    </div>
+                </div>
+            </main>
+        );
+    }
+
+    const feedback = resume?.feedback ?? null;
+
+    return (
+        <main>
+            <nav className="resume-nav">
+                <div className="container-app w-full flex items-center justify-between">
+                    <div className="breadcrumb">
+                        <Link to="/">Home</Link>
+                        <span>/</span>
+                        <span className="text-text-primary font-medium">
+                            {resume?.companyName || resume?.jobTitle || "Analysis"}
+                        </span>
+                    </div>
+                    <Link to="/upload" className="btn-secondary btn-sm">
+                        New analysis
+                    </Link>
+                </div>
+            </nav>
+
+            <div className="container-app" style={{ paddingTop: 32, paddingBottom: 48 }}>
+                <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    style={{ marginBottom: 24 }}
+                >
+                    <span className="eyebrow">Resume Review</span>
+                    <h1 style={{ marginTop: 4 }}>
+                        {resume?.companyName || "Your resume"}
+                        {resume?.jobTitle && (
+                            <span className="text-text-tertiary font-normal">
+                                {" · "}
+                                {resume.jobTitle}
+                            </span>
+                        )}
+                    </h1>
+                </motion.div>
+
+                <div className="flex flex-col gap-5 content-narrow mx-auto">
                     {feedback ? (
-                        <div className="flex flex-col gap-8 animate-in fade-in duration-1000">
+                        <motion.div
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, ease: "easeOut" }}
+                            className="flex flex-col gap-5"
+                        >
                             <Summary feedback={feedback} />
                             <ATS score={feedback.ATS.score || 0} suggestions={feedback.ATS.tips || []} />
                             <Details feedback={feedback} />
-                        </div>
+                            <JobRecommendations skill={resume?.jobTitle || ""} />
+                        </motion.div>
                     ) : (
-                        <img src="/images/resume-scan-2.gif" className="w-full" />
+                        <div className="card flex flex-col items-center" style={{ paddingTop: 48, paddingBottom: 48, gap: 12 }}>
+                            <div className="flex items-center gap-2 text-text-tertiary">
+                                <span className="w-2 h-2 rounded-full bg-brand-600 animate-pulse" />
+                                <span style={{ fontSize: "var(--text-small)" }}>Loading analysis…</span>
+                            </div>
+                        </div>
                     )}
-                </section>
+                </div>
             </div>
         </main>
-    )
-}
-export default Resume
+    );
+};
+
+export default Resume;

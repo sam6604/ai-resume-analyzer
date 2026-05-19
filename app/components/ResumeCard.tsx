@@ -1,47 +1,57 @@
-import {Link} from "react-router";
+import { Link } from "react-router";
 import ScoreCircle from "~/components/ScoreCircle";
-import {useEffect, useState} from "react";
-import {usePuterStore} from "~/lib/puter";
+import type { StoredResume } from "~/lib/storage";
 
-const ResumeCard = ({ resume: { id, companyName, jobTitle, feedback, imagePath } }: { resume: Resume }) => {
-    const { fs } = usePuterStore();
-    const [resumeUrl, setResumeUrl] = useState('');
+const formatDate = (ts: number): string => {
+    try {
+        return new Date(ts).toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+        });
+    } catch {
+        return "";
+    }
+};
 
-    useEffect(() => {
-        const loadResume = async () => {
-            const blob = await fs.read(imagePath);
-            if(!blob) return;
-            let url = URL.createObjectURL(blob);
-            setResumeUrl(url);
-        }
-
-        loadResume();
-    }, [imagePath]);
-
+const ResumeCard = ({ resume }: { resume: StoredResume }) => {
     return (
-        <Link to={`/resume/${id}`} className="resume-card animate-in fade-in duration-1000">
-            <div className="resume-card-header">
-                <div className="flex flex-col gap-2">
-                    {companyName && <h2 className="!text-black font-bold break-words">{companyName}</h2>}
-                    {jobTitle && <h3 className="text-lg break-words text-gray-500">{jobTitle}</h3>}
-                    {!companyName && !jobTitle && <h2 className="!text-black font-bold">Resume</h2>}
+        <Link
+            to={`/resume/${resume.id}`}
+            className="card card-hover flex flex-col group"
+            style={{ gap: 16, padding: 20 }}
+        >
+            <div className="flex items-start justify-between" style={{ gap: 16 }}>
+                <div className="flex flex-col min-w-0 flex-1" style={{ gap: 4 }}>
+                    <h3 className="truncate">{resume.companyName || "Untitled resume"}</h3>
+                    {resume.jobTitle && (
+                        <p className="text-text-secondary truncate" style={{ fontSize: "var(--text-small)" }}>
+                            {resume.jobTitle}
+                        </p>
+                    )}
+                    <p
+                        className="text-text-tertiary"
+                        style={{ fontSize: "var(--text-tiny)", marginTop: 4 }}
+                    >
+                        {formatDate(resume.createdAt)}
+                    </p>
                 </div>
-                <div className="flex-shrink-0">
-                    <ScoreCircle score={feedback.overallScore} />
-                </div>
+                <ScoreCircle score={resume.feedback.overallScore} variant="sm" />
             </div>
-            {resumeUrl && (
-                <div className="gradient-border animate-in fade-in duration-1000">
-                    <div className="w-full h-full">
-                        <img
-                            src={resumeUrl}
-                            alt="resume"
-                            className="w-full h-[350px] max-sm:h-[200px] object-cover object-top"
-                        />
-                    </div>
-                </div>
-                )}
+            <div
+                className="flex items-center justify-between"
+                style={{
+                    paddingTop: 12,
+                    borderTop: "1px solid var(--color-border)",
+                    fontSize: "var(--text-small)",
+                    color: "var(--color-text-secondary)",
+                }}
+            >
+                <span>ATS · <span className="num font-medium text-text-primary">{resume.feedback.ATS.score}/100</span></span>
+                <span className="text-brand-600 font-medium group-hover:underline">View report →</span>
+            </div>
         </Link>
-    )
-}
-export default ResumeCard
+    );
+};
+
+export default ResumeCard;

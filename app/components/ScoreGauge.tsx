@@ -1,58 +1,87 @@
 import { useEffect, useRef, useState } from "react";
+import type { ScoreVariant } from "./ScoreCircle";
 
-const ScoreGauge = ({ score = 75 }: { score: number }) => {
-    const [pathLength, setPathLength] = useState(0);
+interface ScoreGaugeProps {
+    score?: number;
+    variant?: ScoreVariant;
+}
+
+const SIZES: Record<ScoreVariant, { w: number; h: number; stroke: number; num: number }> = {
+    sm: { w: 100, h: 56, stroke: 6, num: 16 },
+    md: { w: 160, h: 88, stroke: 6, num: 28 },
+    lg: { w: 200, h: 110, stroke: 8, num: 32 },
+};
+
+const colorFor = (score: number) => {
+    if (score >= 70) return "#10b981";
+    if (score >= 50) return "#f59e0b";
+    return "#ef4444";
+};
+
+const ScoreGauge = ({ score = 0, variant = "md" }: ScoreGaugeProps) => {
+    const target = Math.max(0, Math.min(100, score));
+    const { w, h, stroke, num } = SIZES[variant];
     const pathRef = useRef<SVGPathElement>(null);
-
-    const percentage = score / 100;
+    const [pathLength, setPathLength] = useState(0);
+    const [animated, setAnimated] = useState(0);
 
     useEffect(() => {
-        if (pathRef.current) {
-            setPathLength(pathRef.current.getTotalLength());
-        }
+        if (pathRef.current) setPathLength(pathRef.current.getTotalLength());
     }, []);
+
+    useEffect(() => {
+        let raf = 0;
+        const startedAt = performance.now();
+        const duration = 800;
+        const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+        const step = (t: number) => {
+            const p = Math.min(1, (t - startedAt) / duration);
+            setAnimated(Math.round(target * ease(p)));
+            if (p < 1) raf = requestAnimationFrame(step);
+        };
+        raf = requestAnimationFrame(step);
+        return () => cancelAnimationFrame(raf);
+    }, [target]);
+
+    const color = colorFor(target);
+    const offset = pathLength * (1 - animated / 100);
 
     return (
         <div className="flex flex-col items-center">
-            <div className="relative w-40 h-20">
-                <svg viewBox="0 0 100 50" className="w-full h-full">
-                    <defs>
-                        <linearGradient
-                            id="gaugeGradient"
-                            x1="0%"
-                            y1="0%"
-                            x2="100%"
-                            y2="0%"
-                        >
-                            <stop offset="0%" stopColor="#a78bfa" />
-                            <stop offset="100%" stopColor="#fca5a5" />
-                        </linearGradient>
-                    </defs>
-
-                    {/* Background arc */}
+            <div className="relative" style={{ width: w, height: h }}>
+                <svg viewBox="0 0 100 55" className="w-full h-full" aria-hidden="true">
                     <path
                         d="M10,50 A40,40 0 0,1 90,50"
                         fill="none"
-                        stroke="#e5e7eb"
-                        strokeWidth="10"
+                        stroke="var(--color-border)"
+                        strokeWidth={stroke}
                         strokeLinecap="round"
                     />
-
-                    {/* Foreground arc with rounded ends */}
                     <path
                         ref={pathRef}
                         d="M10,50 A40,40 0 0,1 90,50"
                         fill="none"
-                        stroke="url(#gaugeGradient)"
-                        strokeWidth="10"
+                        stroke={color}
+                        strokeWidth={stroke}
                         strokeLinecap="round"
                         strokeDasharray={pathLength}
-                        strokeDashoffset={pathLength * (1 - percentage)}
+                        strokeDashoffset={offset}
+                        style={{ transition: "stroke-dashoffset 800ms ease-out" }}
                     />
                 </svg>
-
-                <div className="absolute inset-0 flex flex-col items-center justify-center pt-2">
-                    <div className="text-xl font-semibold pt-4">{score}/100</div>
+                <div className="absolute inset-0 flex items-end justify-center" style={{ paddingBottom: 2 }}>
+                    <span
+                        className="font-semibold num leading-none text-text-primary"
+                        style={{ fontSize: num }}
+                    >
+                        {animated}
+                        <span
+                            className="font-normal text-text-tertiary"
+                            style={{ fontSize: Math.round(num * 0.5) }}
+                        >
+                            {" /100"}
+                        </span>
+                    </span>
                 </div>
             </div>
         </div>

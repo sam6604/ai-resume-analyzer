@@ -1,45 +1,53 @@
-import ScoreGauge from "~/components/ScoreGauge";
-import ScoreBadge from "~/components/ScoreBadge";
+import ScoreCircle from "~/components/ScoreCircle";
 
-const Category = ({ title, score }: { title: string, score: number }) => {
-    const textColor = score > 70 ? 'text-green-600'
-            : score > 49
-        ? 'text-yellow-600' : 'text-red-600';
-
+const CategoryTile = ({ title, score }: { title: string; score: number }) => {
     return (
-        <div className="resume-summary">
-            <div className="category">
-                <div className="flex flex-row gap-2 items-center justify-center">
-                    <p className="text-2xl">{title}</p>
-                    <ScoreBadge score={score} />
-                </div>
-                <p className="text-2xl">
-                    <span className={textColor}>{score}</span>/100
-                </p>
-            </div>
+        <div
+            className="flex flex-col items-center bg-white"
+            style={{
+                gap: 8,
+                padding: "16px 12px",
+                border: "1px solid var(--color-border)",
+                borderRadius: 10,
+            }}
+        >
+            <ScoreCircle score={score} variant="sm" />
+            <p
+                className="text-text-primary font-medium text-center"
+                style={{ fontSize: "var(--text-small)" }}
+            >
+                {title}
+            </p>
         </div>
-    )
-}
+    );
+};
 
 const Summary = ({ feedback }: { feedback: Feedback }) => {
     return (
-        <div className="bg-white rounded-2xl shadow-md w-full">
-            <div className="flex flex-row items-center p-4 gap-8">
-                <ScoreGauge score={feedback.overallScore} />
-
-                <div className="flex flex-col gap-2">
-                    <h2 className="text-2xl font-bold">Your Resume Score</h2>
-                    <p className="text-sm text-gray-500">
-                        This score is calculated based on the variables listed below.
+        <div className="card">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start" style={{ gap: 24 }}>
+                <div className="flex-shrink-0">
+                    <ScoreCircle score={feedback.overallScore} variant="md" />
+                </div>
+                <div className="flex flex-col" style={{ gap: 4 }}>
+                    <h2>Your resume score</h2>
+                    <p style={{ fontSize: "var(--text-small)" }}>
+                        Overall quality across tone, content, structure, and skills.
+                        Scroll for category-level tips and explanations.
                     </p>
                 </div>
             </div>
-
-            <Category title="Tone & Style" score={feedback.toneAndStyle.score} />
-            <Category title="Content" score={feedback.content.score} />
-            <Category title="Structure" score={feedback.structure.score} />
-            <Category title="Skills" score={feedback.skills.score} />
+            <div
+                className="grid grid-cols-2 xl:grid-cols-4"
+                style={{ gap: 12, marginTop: 20 }}
+            >
+                <CategoryTile title="Tone & Style" score={feedback.toneAndStyle.score} />
+                <CategoryTile title="Content" score={feedback.content.score} />
+                <CategoryTile title="Structure" score={feedback.structure.score} />
+                <CategoryTile title="Skills" score={feedback.skills.score} />
+            </div>
         </div>
-    )
-}
-export default Summary
+    );
+};
+
+export default Summary;
